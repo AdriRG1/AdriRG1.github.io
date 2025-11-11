@@ -1,0 +1,41 @@
+<!doctype html> <!-- Indica que es un documento HTML -->
+<html>
+  <head>
+    <meta charset="utf-8" /> <!-- Permite usar acentos y caracteres españoles -->
+    <title>Apuntes p5.js</title> <!-- Nombre que aparecerá en la pestaña del navegador -->
+
+    <!-- Enlace a la librería p5.js alojada en internet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  </head>
+
+  <body>
+    <!-- Aquí podríamos tener texto o botones, pero nosotros solo dibujaremos -->
+    <!-- Cargamos nuestro código JavaScript donde escribiremos el dibujo -->
+    
+  
+<script>
+function setup() {
+  createCanvas(400, 400);
+  background(255);
+
+  noFill();
+  stroke(0);
+  strokeWeight(2);
+  circle(200, 200, 360);  // cara
+
+  fill(0);
+  noStroke(0);
+  strokeWeight(2);
+  circle(250, 100, 60)  // ojo derecho
+  
+  noStroke(0)
+  strokeWeight(2)
+  circle(100, 100, 60)  // ojo izquierdo
+
+  ellipse(200, 200, 260, 120);   // boca
+
+
+}
+</script>
+</body>
+</html>

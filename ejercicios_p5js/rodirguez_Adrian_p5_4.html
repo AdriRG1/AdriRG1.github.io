@@ -1,0 +1,41 @@
+<!doctype html> <!-- Indica que es un documento HTML -->
+<html>
+  <head>
+    <meta charset="utf-8" /> <!-- Permite usar acentos y caracteres españoles -->
+    <title>Apuntes p5.js</title> <!-- Nombre que aparecerá en la pestaña del navegador -->
+
+    <!-- Enlace a la librería p5.js alojada en internet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  </head>
+
+  <body>
+<script>
+function setup() {
+  createCanvas(800, 500);   // Cambia estos números y verás que el texto NO se recoloca solo
+  background(47, 115, 13);
+  noStroke();
+
+  // Título centrado "a mano" (hemos elegido 320 porque 640/2 = 320)
+  textSize(28);
+  textAlign(CENTER, TOP);
+  fill(219, 49, 15);
+  text("FÚTBOL", 400, 16);
+
+  // Subtítulo un poco más abajo
+  textSize(16);
+  fill(255, 255, 255);
+  text("REAL SPORTING DE GIJÓN", 400, 52);
+
+ 
+  // "Centro" aproximado a mano (320, 180)
+  textAlign(CENTER, CENTER);
+  textSize(14);
+  fill(219, 49, 15);
+  text("Desde 1905, no solo es un equipo de fútbol, es mucho más, es una pasión", 400, 180);
+
+}
+    <!-- Aquí podríamos tener texto o botones, pero nosotros solo dibujaremos -->
+    <!-- Cargamos nuestro código JavaScript donde escribiremos el dibujo -->
+    </script>
+  </body>
+</html>
