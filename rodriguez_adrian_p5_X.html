@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>A1 — Mi escena con variables</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  </head>
+  <body>
+  <script>
+  // A1 — Reutilización: añade movimiento con variables (sin condicionales)
+
+  // Estado del objeto que se moverá (elige: coche, nube, sol…)
+  let x, y, v, d, r; // usa las que necesites
+
+  function setup() {
+    createCanvas(1000, 1000);
+
+    // 1) Tamaños relativos
+    d = min(width, height) * 0.12;
+    r = d / 2;
+
+    // 2) Posición inicial relativa (evita números mágicos)
+    x = -r;              // empieza entrando
+    y = height * 0.75;   // por ejemplo, altura de una carretera
+
+    // 3) Velocidad relativa al ancho
+    v = width / 500;
+  }
+
+  function draw() {
+    // --- Fondo/escena previa (adapta a tu dibujo real) ---
+    background(200, 230, 255);
+    noStroke();
+    fill(90, 160, 90);
+    rect(0, height * 0.8, width, height * 0.2);
+
+    // TODO: redibuja aquí TU casa/coche/nube/sol con primitivas.
+    // Ejemplo "coche" (sustitúyelo por el tuyo):
+   fill(240, 200, 0);
+    rect(x - d, y - d*0.4, d*2, d*0.8, d*0.1); // carrocería
+    fill(40);
+    circle(x - d*0.6, y + d*0.45, d*0.5);
+    circle(x + d*0.6, y + d*0.45, d*0.5);
+
+
+
+    // --- Movimiento (variables) ---
+    x = x + v; // sin condicionales ni wrap
+
+    // Rotulito
+    fill(0);
+    textSize(14);
+    textAlign(LEFT, TOP);
+    text("Escena con variables por AdriRG1", 10, 10);
+
+   //casa
+    fill(200, 100, 100);
+    rect(200, 250, 400, 250);
+    
+    fill(130, 60, 10);
+    rect(370, 370, 60, 130);
+
+    fill(135, 206, 235);
+    rect(250, 300, 80, 70);
+    rect(470, 300, 80, 70);
+
+    fill(150, 50, 30);
+    triangle(180, 250, 400, 100, 620, 250);
+
+
+   //sol
+     fill(255, 255, 0);
+     circle(900, 100, 150);
+
+
+   //arcoiris
+     stroke(255, 0, 0);
+     fill (255, 0, 0);
+     arc(0, 50, 1000, 30, PI, 0);
+
+     stroke(0, 0, 255);
+     fill(0, 0, 255);
+     arc(0, 60, 1000, 30, PI, 0);
+
+     stroke(0, 255, 0);
+     fill(0, 255, 0);
+     arc(0, 70, 1000, 30, PI, 0);
+
+  }
+  </script>
+  </body>
+</html>
