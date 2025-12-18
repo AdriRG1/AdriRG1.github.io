@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>If + Luna — apellido_nombre_p5_11</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+</head>
+
+<body>
+<script>
+
+// ---------- VARIABLES ----------
+let xS, yS, dS, rS, vS;   // Sol
+let xL, yL, dL, rL, vL;   // Luna
+
+function setup() {
+  createCanvas(600, 800);
+
+  // ---------- SOL ----------
+  dS = min(width, height) * 0.20;
+  rS = dS / 2;
+  xS = -rS;
+  yS = height / 4;
+  vS = width / 400;
+
+  // ---------- LUNA ----------
+  dL = dS * 0.5;
+  rL = dL / 2;
+  xL = -width - rL;
+  yL = height / 3;
+  vL = vS;
+}
+
+function draw() {
+
+  // ---------- CIELO ----------
+  if (xS <= width + rS) {
+    background(0, 0, 255);   // Día
+  } else {
+    background(10);          // Noche
+  }
+
+  // ---------- SUELO (opcional) ----------
+  noStroke();
+  fill(20, 120, 40);
+  rect(0, height * 0.8, width, height * 0.2);
+
+  // ---------- SOL ----------
+  noStroke();
+  fill(245, 234, 10);
+  circle(xS, yS, dS);
+
+  // ---------- LUNA ----------
+  noStroke();
+  fill(200);
+  circle(xL, yL, dL);
+
+  // ---------- MOVIMIENTO ----------
+  xS = xS + vS;
+  xL = xL + vL;
+
+  // ---------- REINICIO ----------
+  if (xS > 2 * width + rS) {
+    xS = -rS;
+    xL = -width - rL;
+  }
+
+  // ---------- DEPURACIÓN (opcional) ----------
+  textSize(14);
+  fill(255);
+  text("xS: " + xS, 10, 20);
+  text("xL: " + xL, 10, 40);
+}
+
+</script>
+</body>
+</html>
