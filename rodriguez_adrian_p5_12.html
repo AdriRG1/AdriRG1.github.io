@@ -1,0 +1,92 @@
+<!doctype html> <!-- Indica que es un documento HTML -->
+<html>
+  <head>
+    <meta charset="utf-8" /> <!-- Permite usar acentos y caracteres españoles -->
+    <title>Tarea 12</title></title> <!-- Nombre que aparecerá en la pestaña del navegador -->
+
+    <!-- Enlace a la librería p5.js alojada en internet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  </head>
+
+  <body>
+    <!-- Aquí podríamos tener texto o botones, pero nosotros solo dibujaremos -->
+    <!-- Cargamos nuestro código JavaScript donde escribiremos el dibujo -->
+    <script>
+// ===== VARIABLES =====
+let xS, xL;
+let rS = 40;
+let rL = 30;
+let vS = 2;
+let vL = 2;
+
+let dia, mes, anio;
+
+// ===== SETUP =====
+function setup() {
+  createCanvas(800, 400);
+
+  xS = -rS;
+  xL = -rL;
+
+  dia = 1;
+  mes = 1;
+  anio = 2025;
+}
+
+// ===== DRAW =====
+function draw() {
+
+  // Fondo según posición del Sol
+  if (xS <= width + rS) {
+    background(135, 206, 235); // día
+  } else {
+    background(20, 24, 82);   // noche
+  }
+
+  // ===== SOL =====
+  fill(255, 200, 0);
+  noStroke();
+  ellipse(xS, height / 3, rS * 2);
+  xS = xS + vS;
+
+  // ===== LUNA =====
+  fill(220);
+  ellipse(xL, height / 3, rL * 2);
+  xL = xL + vL;
+
+  // ===== CALENDARIO =====
+  noStroke();
+  if (xS <= width + rS) {
+    fill(0);     // día
+  } else {
+    fill(255);   // noche
+  }
+
+  textSize(20);
+  text("Fecha: (" + dia + ") (" + mes + ") (" + anio + ")", 10, 25);
+
+  // ===== REINICIO + LÓGICA CALENDARIO =====
+  if (xS > 2 * width + rS) {
+
+    xS = -rS;
+    xL = -rL;
+
+    // Sumar día
+    dia = dia + 1;
+
+    // 30 días → nuevo mes
+    if (dia > 30) {
+      dia = 1;
+      mes = mes + 1;
+    }
+
+    // 12 meses → nuevo año
+    if (mes > 12) {
+      mes = 1;
+      anio = anio + 1;
+    }
+  }
+}
+</script>
+  </body>
+</html>
