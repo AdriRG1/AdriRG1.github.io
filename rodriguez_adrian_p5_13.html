@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>T13 Stickman con teclado</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+</head>
+
+<body>
+<script>
+
+// ==========================
+// T12 — Sol + Luna + calendario
+// ==========================
+let sunX, moonX;
+let sunY, moonY;
+let sunR, moonR;
+let speed;
+
+// Calendario
+let day = 1;
+let month = 1;
+let year = 2026;
+
+// ==========================
+// T13 — Stickman
+// ==========================
+let xP, yP;        // posición
+let S;             // tamaño
+let vP;            // velocidad horizontal
+
+let groundY;       // suelo
+let vY;            // velocidad vertical
+let jumpV;         // impulso salto
+let g;             // gravedad
+
+function setup() {
+  createCanvas(800, 500);
+
+  // Sol y Luna
+  sunX = 0;
+  moonX = width;
+  sunY = 0.25 * height;
+  moonY = 0.25 * height;
+  sunR = 40;
+  moonR = 30;
+  speed = width / 600;
+
+  // Suelo
+  groundY = 0.80 * height;
+
+  // Stickman
+  S  = 0.12 * min(width, height);
+  xP = 0.25 * width;
+  yP = groundY;
+
+  vP = width / 150;
+
+  vY = 0;
+  jumpV = -0.030 * height;
+  g = 0.0016 * height;
+}
+
+function draw() {
+
+  // ==========================
+  // Día / Noche
+  // ==========================
+  if (sunX < width) {
+    background(135, 206, 235); // día
+  } else {
+    background(20, 30, 60);   // noche
+  }
+
+  // ==========================
+  // Sol
+  // ==========================
+  fill(255, 204, 0);
+  noStroke();
+  circle(sunX, sunY, sunR * 2);
+  sunX += speed;
+
+  if (sunX > width + sunR) {
+    sunX = -sunR;
+
+    // avanzar día
+    day++;
+    if (day > 30) {
+      day = 1;
+      month++;
+      if (month > 12) {
+        month = 1;
+        year++;
+      }
+    }
+  }
+
+  // ==========================
+  // Luna
+  // ==========================
+  fill(230);
+  circle(moonX, moonY, moonR * 2);
+  moonX += speed;
+
+  if (moonX > width + moonR) {
+    moonX = -moonR;
+  }
+
+  // ==========================
+  // Suelo
+  // ==========================
+  fill(60, 180, 80);
+  rect(0, groundY, width, height - groundY);
+
+  // ==========================
+  // Movimiento horizontal
+  // ==========================
+  if (keyIsDown(LEFT_ARROW)) {
+    xP -= vP;
+  } else if (keyIsDown(RIGHT_ARROW)) {
+    xP += vP;
+  }
+
+  xP = constrain(xP, 0, width);
+
+  // ==========================
+  // Física del salto
+  // ==========================
+  vY += g;
+  yP += vY;
+
+  if (yP > groundY) {
+    yP = groundY;
+    vY = 0;
+  }
+
+  // ==========================
+  // Stickman
+  // ==========================
+  drawStickman(xP, yP, S);
+
+  // ==========================
+  // Calendario
+  // ==========================
+  fill(255);
+  textSize(16);
+  textAlign(LEFT, TOP);
+  text("Fecha: " + day + "/" + month + "/" + year, 20, 20);
+}
+
+function keyPressed() {
+  if (keyCode === UP_ARROW) {
+    if (yP === groundY) {
+      vY = jumpV;
+    }
+  }
+}
+
+// ==========================
+// Dibujo del stickman
+// ==========================
+function drawStickman(xP, yP, S) {
+
+  let rHead = 0.20 * S;
+  let bodyL = 0.60 * S;
+  let armL  = 0.45 * S;
+  let legL  = 0.55 * S;
+
+  let hipY = yP - legL;
+  let shoulderY = hipY - bodyL;
+  let headY = shoulderY - rHead;
+
+  stroke(0);
+  strokeWeight(0.06 * S);
+  noFill();
+
+  // Cabeza
+  circle(xP, headY, 2 * rHead);
+
+  // Tronco
+  line(xP, shoulderY, xP, hipY);
+
+  // Brazos
+  line(xP - 0.25*S, shoulderY, xP + 0.25*S, shoulderY);
+  line(xP - 0.25*S, shoulderY, xP - 0.25*S, shoulderY + armL);
+  line(xP + 0.25*S, shoulderY, xP + 0.25*S, shoulderY + armL);
+
+  // Piernas
+  line(xP, hipY, xP - 0.18*S, yP);
+  line(xP, hipY, xP + 0.18*S, yP);
+}
+
+</script>
+</body>
+</html>
