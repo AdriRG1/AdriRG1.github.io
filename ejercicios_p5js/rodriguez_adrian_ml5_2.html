@@ -1,0 +1,180 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ML5 02 · Capturas COCO</title>
+
+  <!-- ml5.js (versión fija para evitar cambios de API) -->
+  <script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
+
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 16px; }
+    #wrap { position: relative; width: min(720px, 100%); }
+    video, canvas { width: 100%; height: auto; border-radius: 10px; }
+    canvas { position: absolute; left: 0; top: 0; }
+    button { padding: 10px 12px; font-size: 14px; cursor: pointer; }
+    .row { display:flex; gap:12px; flex-wrap: wrap; align-items:center; margin-bottom: 10px; }
+    .badge { display:inline-block; border:1px solid #ccc; border-radius:999px; padding: 3px 10px; }
+    .small { font-size: 13px; color: #333; }
+  </style>
+</head>
+
+<body>
+  <h1>ML5 02 · Capturas COCO</h1>
+
+  <div class="row">
+    <button id="btnStart">Iniciar cámara</button>
+    <button id="btnShot">Capturar</button>
+    <span id="status" class="badge">Estado: esperando…</span>
+    <span id="best" class="badge">Mejor detección: —</span>
+  </div>
+
+  <div id="wrap">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="overlay"></canvas>
+  </div>
+
+  <script>
+    const btnStart = document.getElementById("btnStart");
+    const btnShot  = document.getElementById("btnShot");
+    const statusEl = document.getElementById("status");
+    const bestEl   = document.getElementById("best");
+
+    const video  = document.getElementById("video");
+    const canvas = document.getElementById("overlay");
+    const ctx    = canvas.getContext("2d");
+
+    let detector = null;
+    let running  = false;
+    let ultimoLabel = "sin_objeto";
+
+    function setStatus(t) {
+      statusEl.textContent = "Estado: " + t;
+    }
+
+    async function initCamera() {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false
+      });
+
+      video.srcObject = stream;
+      await new Promise(res => video.onloadedmetadata = () => res());
+
+      canvas.width  = video.videoWidth;
+      canvas.height = video.videoHeight;
+    }
+
+    function drawDetections(detections) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.lineWidth = 3;
+      ctx.font = "16px system-ui, Arial";
+      ctx.strokeStyle = "red";
+      ctx.fillStyle = "red";
+
+      for (const d of detections) {
+        ctx.strokeRect(d.x, d.y, d.width, d.height);
+
+        const pct = Math.round(d.confidence * 100);
+        const label = `${d.label} (${pct}%)`;
+
+        const pad = 4;
+        const textW = ctx.measureText(label).width;
+        const tx = d.x;
+        const ty = Math.max(18, d.y);
+
+        ctx.fillRect(tx, ty - 18, textW + pad * 2, 18);
+        ctx.fillStyle = "white";
+        ctx.fillText(label, tx + pad, ty - 4);
+        ctx.fillStyle = "red";
+      }
+    }
+
+    function pickBest(detections) {
+      if (!detections || detections.length === 0) return null;
+      let best = detections[0];
+      for (const d of detections) {
+        if (d.confidence > best.confidence) best = d;
+      }
+      return best;
+    }
+
+    function loopDetect() {
+      if (!running || !detector) return;
+
+      detector.detect(video, (err, results) => {
+        if (err) {
+          console.error(err);
+          setStatus("error en detección");
+          running = false;
+          return;
+        }
+
+        drawDetections(results);
+
+        const best = pickBest(results);
+
+        if (best) {
+          ultimoLabel = best.label;
+          bestEl.textContent =
+            `Mejor detección: ${best.label} (${Math.round(best.confidence * 100)}%)`;
+        } else {
+          ultimoLabel = "sin_objeto";
+          bestEl.textContent = "Mejor detección: —";
+        }
+
+        requestAnimationFrame(loopDetect);
+      });
+    }
+
+    function nombreSeguro(label) {
+      return (label || "sin_objeto")
+        .toLowerCase()
+        .replaceAll(" ", "_")
+        .replaceAll("/", "_");
+    }
+
+    btnShot.addEventListener("click", () => {
+      const ahora = new Date();
+      const ts =
+        String(ahora.getFullYear()) +
+        String(ahora.getMonth() + 1).padStart(2, "0") +
+        String(ahora.getDate()).padStart(2, "0") + "_" +
+        String(ahora.getHours()).padStart(2, "0") +
+        String(ahora.getMinutes()).padStart(2, "0") +
+        String(ahora.getSeconds()).padStart(2, "0");
+
+      const file = `${ts}_${nombreSeguro(ultimoLabel)}.png`;
+
+      const link = document.createElement("a");
+      link.download = file;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+
+    btnStart.addEventListener("click", async () => {
+      try {
+        btnStart.disabled = true;
+
+        setStatus("iniciando cámara…");
+        await initCamera();
+
+        setStatus("cargando modelo COCO-SSD…");
+        detector = await ml5.objectDetector("cocossd");
+
+        setStatus("detectando…");
+        running = true;
+        loopDetect();
+
+      } catch (e) {
+        console.error(e);
+        setStatus(`error: ${e.name}`);
+        btnStart.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
